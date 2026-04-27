@@ -1,34 +1,31 @@
-//Time class
-class Time{
-    public:
-    int start;
-    int end;
-};
-
-int Solution::solve(vector<int> &A, vector<int> &B) {
-    vector<Time> arr;
-    //insert the array value in pair
-    // TC: O(n)
-    for(int i=0; i<A.size(); i++){
-        arr.push_back({A[i], B[i]});
+struct Pair{
+    int s;
+    int e;
+    Pair(int a, int b){
+        e=a;
+        s=b;
     }
-    //sort the array
-    // TC: O(nlogn)
-    std::sort(arr.begin(), arr.end(), [](const Time &a, const Time &b){
-        return a.end < b.end;
-    });
+};
+struct cmp{
+    bool operator()(const Pair &a, const Pair &b)const {
+        return a.e>b.e;
+    }
+};
+int Solution::solve(vector<int> &A, vector<int> &B) {
+    priority_queue<Pair, vector<Pair>, cmp> pq; //SC: O(n)
+    for(int i=0; i<A.size(); i++){  //TC: O(n)
+        pq.push(Pair(B[i], A[i]));  //TC: O(logn)
+    } 
+    Pair top = pq.top();
+    pq.pop();                       //TC: O(logn)
     int count=1;
-    Time currJob = arr[0];
-    int i=1;
-    int n = arr.size();
-    //greedily select the jobs
-    // TC: O(n)
-    while(i<n){
-        if(currJob.end<=arr[i].start){
+    while(!pq.empty()){             //TC: O(n)
+        Pair second = pq.top();     
+        pq.pop();                   //TC: O(logn)
+        if(second.s>=top.e){
             count++;
-            currJob = arr[i];
+            top = second;
         }
-        i++;
     }
     return count;
 }
