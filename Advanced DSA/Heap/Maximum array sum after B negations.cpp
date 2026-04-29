@@ -1,20 +1,22 @@
 int Solution::solve(vector<int> &A, int B) {
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int,int>>> pq;
-    int n = A.size();
-    for(int i=0; i<n; i++){
-        pq.push({A[i], i});
+    priority_queue<int, vector<int>, greater<int>> pq; //SC: O(n)
+    int n=A.size();
+    for(int i=0; i<n; i++){     //O(n)
+        pq.push(A[i]);          //O(logn)
     }
-    while(B>0){
-        pair<int, int> minEl = pq.top();
-        pq.pop();
-        int val = -1*minEl.first;
-        A[minEl.second] = val;
-        pq.push({val, minEl.second});
-        B--;
+    while(B--){                 //O(B)
+        int top = pq.top();     
+        pq.pop();               //O(logn)
+        top = -1*top;
+        pq.push(top);           //O(logn)
     }
-    int sum=0;
-    for(int x:A){
-        sum+=x;
+    int total=0;
+    while(!pq.empty()){         //O(n)
+        total += pq.top();      
+        pq.pop();               //O(logn)
     }
-    return sum;
+    return total;
 }
+
+//TC: O(nlogn + Blogn )
+//SC: O(n)
