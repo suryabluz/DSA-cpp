@@ -1,17 +1,44 @@
-int Solution::solve(int A, vector<vector<int> > &B) {
-    priority_queue<int, vector<int>, greater<int>> pq;              //SC:O(A)
-    sort(B.begin(), B.end(), [](vector<int> &a, vector<int> &b){    //TC:O(AlogA)
-        return a[0]<b[0];
-    });
-    pq.push(B[0][1]);               //TC:O(logA)
-    for(int i=1; i<A; i++){         //TC:O(A)  
-        int top = pq.top();
-        if(top<=B[i][0]){
-            pq.pop();               //TC:O(logA)
-        }
-            pq.push(B[i][1]);           //TC:O(logA)
+#include <unordered_map>
+#include <climits>
+string Solution::minWindow(string A, string B) {
+    unordered_map<char, int> count;             //SC:O(1) // At max we are going to store 52 char A-Z, a-z
+    for(char el:B){                             //TC:O(n)
+        count[el]++;
     }
-    return pq.size();
+    int required = count.size();
+    int formed=0;
+    int l=0;
+    int r=0;
+    int minLen = INT_MAX;
+    int minLeft = 0;
+    int minRight = 0;
+    while(r<A.size()){                          
+        char right = A[r];
+        if(count.find(right)!=count.end()){
+            count[right]--;
+            if(count[right]==0){
+                formed++;
+            }
+        }
+        
+        while(formed==required){                
+            if((r-l+1)<minLen){
+                minLen = r-l+1;
+                minLeft = l;
+                minRight = r;
+            }
+            char left = A[l];
+            if(count.find(left)!=count.end()){
+                count[left]++;
+                if(count[left]==1){
+                    formed--;
+                }
+            }
+            l++;
+        }
+        r++;
+    }
+    return (minLen==INT_MAX)?"-1":A.substr(minLeft, minLen);
 }
-//TC:O(AlogA)
-//TC:O(K)
+//TC:O(n)
+//SC:O(1)
